@@ -55,7 +55,7 @@ public class Observer extends Node {
          * System.out.println();
          */
         for (int i = 0; i < n; i++) {
-            if (controlVector[i] != -1) {
+            if (controlVector[i] != 0) {
                 return false;
             }
         }

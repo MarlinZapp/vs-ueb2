@@ -3,14 +3,23 @@ package ueb2;
 import org.oxoo2a.sim4da.Simulator;
 
 public class Simulation {
+
     public static void main(String[] args) {
         int argsLength = 1;
         if (args.length != argsLength) {
-            System.out.println("Expected " + argsLength + "arguments. Got " + args.length + " arguments!");
+            System.out.println(
+                    "Expected " +
+                            argsLength +
+                            "arguments. Got " +
+                            args.length +
+                            " arguments!");
         }
         try {
             int n = Integer.parseInt(args[0]);
             Simulation simulation = new Simulation(n);
+        } catch (NumberFormatException e) {
+            System.err.println(
+                    "Please provide the number of actors as first argument!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -30,7 +39,8 @@ public class Simulation {
         Observer o = new Observer("observer", n);
         sim.simulate();
         long startTimeMilliSeconds = System.currentTimeMillis();
-        System.out.println("Simulating " + n + " actors sending firework messages...");
+        System.out.println(
+                "Simulating " + n + " actors sending firework messages...");
         new Thread(() -> {
             sim.awaitSimulationStart();
             while (!o.terminated()) {
@@ -40,13 +50,17 @@ public class Simulation {
                     e.printStackTrace();
                 }
             }
-            System.out.println("There are no more firework messages in the simulation.");
+            System.out.println(
+                    "There are no more firework messages in the simulation.");
             o.sendTermination();
             System.out.println("Terminated actor message receivers.");
             sim.shutdown();
             long endTimeMilliSeconds = System.currentTimeMillis();
             long duration = endTimeMilliSeconds - startTimeMilliSeconds;
-            System.out.println("Shutdown of the simulation after " + duration + " milliseconds!");
+            System.out.println(
+                    "Shutdown of the simulation after " +
+                            duration +
+                            " milliseconds!");
         }).start();
     }
 }

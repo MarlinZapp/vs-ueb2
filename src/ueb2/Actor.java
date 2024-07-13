@@ -1,7 +1,10 @@
 package ueb2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -10,6 +13,7 @@ import org.oxoo2a.sim4da.Node;
 import org.oxoo2a.sim4da.UnknownNodeException;
 
 public class Actor extends Node {
+
     private int n;
     private double p = 0.8;
     private ActorStatus status;
@@ -21,6 +25,7 @@ public class Actor extends Node {
         this.n = n;
         messages = new int[n];
         Arrays.fill(messages, 0);
+        messages[name()]++;
         this.status = ActorStatus.ACTIVE;
     }
 
@@ -54,7 +59,10 @@ public class Actor extends Node {
                     }
                 } catch (UnknownNodeException e) {
                     System.err.println(
-                            "Error occured while sending message from actor " + this.NodeName() + " to actor " + i);
+                            "Error occured while sending message from actor " +
+                                    this.NodeName() +
+                                    " to actor " +
+                                    i);
                     e.printStackTrace();
                 }
             });
@@ -63,6 +71,7 @@ public class Actor extends Node {
     }
 
     private class Receiver extends Thread {
+
         private boolean terminated = false;
 
         public Receiver() {
@@ -119,19 +128,30 @@ public class Actor extends Node {
 
     // gets m random integers between 0 (inclusive) and n (exclusive)
     private static Set<Integer> getRandomUniqueInts(int m, int n) {
-        Random random = new Random();
         Set<Integer> uniqueInts = new HashSet<>();
-
         // Check if it's possible to get m unique numbers in the range 0 to n
         if (m > n) {
-            throw new IllegalArgumentException("Cannot generate more unique numbers than the size of the range.");
+            throw new IllegalArgumentException(
+                    "Cannot generate more unique numbers than the size of the range.");
         }
 
-        while (uniqueInts.size() < m) {
-            int randInt = random.nextInt(n); // Generate a random number between 0 (inclusive) and n (exclusive)
-            uniqueInts.add(randInt); // Add to the set (automatically handles duplicates)
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            numbers.add(i);
         }
 
+        Collections.shuffle(numbers);
+        int i = 0;
+        for (int number : numbers) {
+            if (i++ < m) {
+                uniqueInts.add(number);
+            } else {
+                break;
+            }
+        }
+        if (uniqueInts.size() != m) {
+            System.err.println("Ich bin dumm! " + uniqueInts.size());
+        }
         return uniqueInts;
     }
 
