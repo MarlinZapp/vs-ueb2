@@ -22,6 +22,10 @@ public class Actor extends Node {
         messages = new int[n];
         Arrays.fill(messages, 0);
         this.status = ActorStatus.ACTIVE;
+    }
+
+    @Override
+    public void engage() {
         new Receiver().start();
         firework();
     }
@@ -29,7 +33,7 @@ public class Actor extends Node {
     private void firework() {
         new Thread(() -> {
             try {
-                Thread.sleep(new Random().nextInt(9) * 1000 + 1000);
+                Thread.sleep(new Random().nextInt(9) * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

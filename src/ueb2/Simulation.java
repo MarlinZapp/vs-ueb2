@@ -1,5 +1,7 @@
 package ueb2;
 
+import org.oxoo2a.sim4da.Simulator;
+
 public class Simulation {
     public static void main(String[] args) {
         int argsLength = 1;
@@ -10,7 +12,7 @@ public class Simulation {
             int n = Integer.parseInt(args[0]);
             Simulation simulation = new Simulation(n);
         } catch (Exception e) {
-            System.err.println("Could not parse first argument as int!");
+            e.printStackTrace();
         }
     }
 
@@ -18,6 +20,7 @@ public class Simulation {
     private Actor[] actors;
 
     public Simulation(int n) {
+        Simulator sim = Simulator.getInstance();
         this.n = n;
         this.actors = new Actor[n];
         for (int i = 0; i < n; i++) {
@@ -25,12 +28,11 @@ public class Simulation {
             actors[i] = a;
         }
         Observer o = new Observer("observer", n);
+        sim.simulate();
+        long startTimeMilliSeconds = System.currentTimeMillis();
+        System.out.println("Simulating " + n + " actors sending firework messages...");
         new Thread(() -> {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            sim.awaitSimulationStart();
             while (!o.terminated()) {
                 try {
                     Thread.sleep(1000);
@@ -38,8 +40,13 @@ public class Simulation {
                     e.printStackTrace();
                 }
             }
+            System.out.println("There are no more firework messages in the simulation.");
             o.sendTermination();
-            System.out.println("Terminated!");
+            System.out.println("Terminated actor message receivers.");
+            sim.shutdown();
+            long endTimeMilliSeconds = System.currentTimeMillis();
+            long duration = endTimeMilliSeconds - startTimeMilliSeconds;
+            System.out.println("Shutdown of the simulation after " + duration + " milliseconds!");
         }).start();
     }
 }
